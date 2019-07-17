@@ -1,4 +1,4 @@
-import { CHANGE_INPUT, CLEAR_INPUT, RUN_INPUT } from './actionTypes'
+import { CHANGE_INPUT, CLEAR_INPUT, RUN_INPUT ,BACK_SPACE} from './actionTypes'
 
 const defaultState = {
     inputValue: "计算器",
@@ -16,7 +16,11 @@ export default (state = defaultState, action) => {
         return newState
     } else if (action.type === RUN_INPUT) {
         let newState = JSON.parse(JSON.stringify(state))
-        newState.equation = action.result  
+        newState.equation = action.result
+        return newState
+    } else if (action.type === BACK_SPACE) {
+        let newState = JSON.parse(JSON.stringify(state))
+        newState.equation = action.result
         return newState
     }
     return state

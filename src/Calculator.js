@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Input, Button } from 'antd';
-import { inputAction, claerAction, runAction } from './calstore/actionCreators'
+import { inputAction, claerAction, runAction, backSpaceAction } from './calstore/actionCreators'
 import store from './calstore'
 import 'antd/dist/antd.css'
 import './Calculator.css'
@@ -22,7 +22,8 @@ const KEY = [
     { 'value': '0' },
     { 'value': '=' },
     { 'value': '/' },
-    { 'value': 'C' }
+    { 'value': 'C' },
+    { 'value': '<-' },
 ]
 class Calculator extends Component {
     constructor(props) {
@@ -41,12 +42,21 @@ class Calculator extends Component {
                 action = runAction(result);
                 break;
             }
+            case "<-": {
+                action = backSpaceAction(this.backSpace(this.state.equation));
+                break;
+            }
+
             default:
                 action = inputAction(count)
                 break;
         }
         store.dispatch(action)
         this.storeChange()
+    }
+    backSpace(str) {
+        str = str.substring(0, str.length - 1);
+        return str;
     }
     //字符串转数组
     stringToArray(str) {
@@ -77,13 +87,17 @@ class Calculator extends Component {
                 if (operator.length === 0) {
                     operator.push(a)
                 } else {
-                    var tmp = operator.pop()
-                    if (this.operatorCompare(a, tmp)) {
-                        str = str + tmp + " ";
-                        operator.push(a)
-                    } else {
+                    let test = operator.length
+                    for (let index = 0; index <= test; index++) {
+                        let tmp = operator.pop()
                         operator.push(tmp)
-                        operator.push(a)
+                        let flag = this.operatorCompare(a, tmp)
+                        if (flag && operator.length !== 0) {
+                            str = str + operator.pop() + " ";
+                        } else {
+                            operator.push(a)
+                            break;
+                        }
                     }
                 }
             }
@@ -91,10 +105,9 @@ class Calculator extends Component {
         while (operator.length !== 0) {
             str = str + operator.pop() + " ";
         }
-        console.log(str, operator);
+        console.log(str);
         return str;
     }
-    //1*2+3-4=1       1 2 * 3 4 - +
     //后缀表达式运算
     suffixResult(str) {
         let data = str.split(' ');
@@ -146,7 +159,9 @@ class Calculator extends Component {
             default:
                 break;
         }
-        return flaga < flagb
+        console.log(flaga, flagb);
+
+        return flaga <= flagb
     }
     render() {
         var buttonList = [];
