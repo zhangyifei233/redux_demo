@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import 'antd/dist/antd.css'
 import store from './store'
-import { changeInputAction, addItemAction, deleteItemAction, getListAction } from './store/actionCreators'
+import { changeInputAction, addItemAction, deleteItemAction, getListAction, getTodoList } from './store/actionCreators'
 import TodoListUI from './TodoListUI'
-import axios from 'axios'
 
 class TodoList extends Component {
     constructor(props) {
@@ -31,13 +30,9 @@ class TodoList extends Component {
     storeChange() {
         this.setState(store.getState())
     }
-    componentDidMount(){
-        axios.get('https://www.easy-mock.com/mock/5d26b4189a15e66a218c3287/reactdemo01/test').then(
-            (res)=>{
-                const action = getListAction(res.data.data.list)
-                store.dispatch(action)
-            }
-        )
+    componentDidMount() {
+        const action = getTodoList()
+        store.dispatch(action)
     }
     render() {
         return (
